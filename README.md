@@ -1,0 +1,1 @@
+# phpBB---AJAX-Registration-Check
