@@ -1,0 +1,3 @@
+pcgf_ajaxregistrationcheck_controller:
+    path: /pcgf/ajaxregistrationcheck/{type}
+    defaults: { _controller: pcgf.ajaxregistrationcheck.controller:check }

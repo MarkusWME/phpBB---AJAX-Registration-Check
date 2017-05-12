@@ -1,0 +1,15 @@
+services:
+    pcgf.ajaxregistrationcheck.listener:
+        class: pcgf\ajaxregistrationcheck\event\listener
+        arguments:
+            - '@config'
+            - '@controller.helper'
+            - '@template'
+            - '@user'
+        tags:
+            - { name: event.listener }
+    pcgf.ajaxregistrationcheck.controller:
+        class: pcgf\ajaxregistrationcheck\controller\controller
+        arguments:
+            - '@request'
+            - '@dbal.conn'
