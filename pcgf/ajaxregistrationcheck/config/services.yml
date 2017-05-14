@@ -13,3 +13,4 @@ services:
         arguments:
             - '@request'
             - '@dbal.conn'
+            - '@user'
