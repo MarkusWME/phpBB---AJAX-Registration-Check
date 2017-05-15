@@ -71,11 +71,28 @@ class listener implements EventSubscriberInterface
      */
     public function assign_register_data()
     {
+        // Load language data
+        $this->user->add_lang_ext('pcgf/ajaxregistrationcheck', array('ajaxregistrationcheck'));
         $username_rule = $this->config['allow_name_chars'];
         switch ($username_rule)
         {
             case 'USERNAME_CHARS_ANY':
-                $username_rule = '^.*$';
+                $username_rule = "^.*$";
+            break;
+            case 'USERNAME_ALPHA_ONLY':
+                $username_rule = "^[a-zA-Z0-9]*$";
+            break;
+            case 'USERNAME_ALPHA_SPACERS':
+                $username_rule = "^[a-zA-Z0-9 \\-\\+_\\[\\\]]*$";
+            break;
+            case 'USERNAME_LETTER_NUM':
+                $username_rule = "^[a-zA-Z0-9äöüÄÖÜ]*$";
+            break;
+            case 'USERNAME_LETTER_NUM_SPACERS':
+                $username_rule = "^[a-zA-Z0-9äöüÄÖÜ \\-\\+_\\[\\\]]*$";
+            break;
+            case 'USERNAME_ASCII':
+                $username_rule = "^[a-zA-Z0-9 !\\\"#\\$%&'\\(\\)\\*\\+,\\-\\.\\/:;<=>\\?@\\[\\\]\\^_`\\{\\|\\}~]*$";
             break;
         }
         $this->template->assign_vars(array(
@@ -84,6 +101,7 @@ class listener implements EventSubscriberInterface
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_RULE'               => $username_rule,
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_INVALID_BOUNDARIES' => $this->user->lang($this->config['allow_name_chars'] . '_EXPLAIN', $this->config['min_name_chars'], $this->config['max_name_chars']),
             'PCGF_AJAXREGISTRATIONCHECK_CHECK_USERNAME_LINK'         => $this->helper->route('pcgf_ajaxregistrationcheck_controller', array('type' => 'username')),
+            'PCGF_AJAXREGISTRATIONCHECK_CHECK_EMAIL_LINK'            => $this->helper->route('pcgf_ajaxregistrationcheck_controller', array('type' => 'email')),
         ));
     }
 }

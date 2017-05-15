@@ -3,6 +3,7 @@ var pcgfAJAXRegistrationCheckEMail = $('#pcgf-ajaxregistrationcheck-email');
 var pcgfAJAXRegistrationCheckPassword = $('#pcgf-ajaxregistrationcheck-password');
 var pcgfAJAXRegistrationCheckConfirmPassword = $('#pcgf-ajaxregistrationcheck-confirm-password');
 
+var pcgfAJAXRegistrationCheckEMailRule = new RegExp('^[A-Za-z0-9\.!#\$%&\'\*\+-/=\?\^_`\{\|\}~\.]*@([a-zA-Z0-9][a-zA-Z0-9\-]*\.)+[a-zA-Z]{2,}$', 'i');
 pcgfAJAXRegistrationCheckUsernameRule = new RegExp(pcgfAJAXRegistrationCheckUsernameRule, 'i');
 
 function setInvalid(message, messageField, field) {
@@ -28,7 +29,7 @@ $(document).ready(function() {
     pcgfAJAXRegistrationCheckUsername.insertAfter(usernameField);
     usernameField.on('keyup', function() {
         var value = $(this).val();
-        if (value.length < pcgfAJAXRegistrationCheckUsernameMin || value.length > pcgfAJAXRegistrationCheckUsernameMax || !value.match(pcgfAJAXRegistrationCheckUsernameRule)) {
+        if (value.length < pcgfAJAXRegistrationCheckUsernameMin || value.length > pcgfAJAXRegistrationCheckUsernameMax || value.match(pcgfAJAXRegistrationCheckUsernameRule) === null) {
             setInvalid(pcgfAJAXRegistrationCheckUsernameInvalidBoundaries, pcgfAJAXRegistrationCheckUsername, $(this));
         } else {
             setLoading(pcgfAJAXRegistrationCheckLoading, pcgfAJAXRegistrationCheckUsername, $(this));
@@ -49,4 +50,29 @@ $(document).ready(function() {
         }
     });
     usernameField.trigger('keyup');
+    var eMailField = $('#email');
+    pcgfAJAXRegistrationCheckEMail.insertAfter(eMailField);
+    eMailField.on('keyup', function() {
+        var value = $(this).val();
+        if (value.match(pcgfAJAXRegistrationCheckEMailRule) === null) {
+            setInvalid(pcgfAJAXRegistrationCheckEMailInvalid, pcgfAJAXRegistrationCheckEMail, $(this));
+        } else {
+            setLoading(pcgfAJAXRegistrationCheckLoading, pcgfAJAXRegistrationCheckEMail, $(this));
+            $.ajax({
+                url: pcgfAJAXRegistrationCheckEMailCheckLink,
+                type: 'POST',
+                data: {'search': value},
+                success: function(result) {
+                    if (result[0] === 'OK') {
+                        setValid(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
+                    } else if (result[0] === 'INVALID QUERY') {
+                        setLoading(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
+                    } else {
+                        setInvalid(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
+                    }
+                }
+            });
+        }
+    });
+    eMailField.trigger('keyup');
 });

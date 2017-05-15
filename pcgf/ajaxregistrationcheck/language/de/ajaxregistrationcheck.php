@@ -20,5 +20,7 @@ if (empty($lang) || !is_array($lang))
 // Merge AJAX Registration Check language data to the existing language data
 $lang = array_merge($lang, array(
     'PCGF_AJAXREGISTRATIONCHECK_INVALID_QUERY' => 'Die durchgeführte Abfrage ist ungültig!',
-    'PCGF_AJAXREGISTRATIONCHECK_USERNAME_OK'   => 'Der angegebene Benutzername ist gültig.',
+    'PCGF_AJAXREGISTRATIONCHECK_USERNAME_OK'   => 'Der angegebene Benutzername kann verwendet werden.',
+    'PCGF_AJAXREGISTRATIONCHECK_EMAIL_INVALID' => 'Die Eingabe ist keine gültige E-Mail-Adresse!',
+    'PCGF_AJAXREGISTRATIONCHECK_EMAIL_OK'      => 'Die angegebene E-Mail-Adresse kann verwendet werden.',
 ));
