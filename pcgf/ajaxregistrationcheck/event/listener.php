@@ -100,6 +100,7 @@ class listener implements EventSubscriberInterface
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_MAX'                => $this->config['max_name_chars'],
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_RULE'               => $username_rule,
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_INVALID_BOUNDARIES' => $this->user->lang($this->config['allow_name_chars'] . '_EXPLAIN', $this->config['min_name_chars'], $this->config['max_name_chars']),
+            'PCGF_AJAXREGISTRATIONCHECK_EMAIL_RULE'                  => str_replace('\\', '\\\\', get_preg_expression('email')),
             'PCGF_AJAXREGISTRATIONCHECK_CHECK_USERNAME_LINK'         => $this->helper->route('pcgf_ajaxregistrationcheck_controller', array('type' => 'username')),
             'PCGF_AJAXREGISTRATIONCHECK_CHECK_EMAIL_LINK'            => $this->helper->route('pcgf_ajaxregistrationcheck_controller', array('type' => 'email')),
         ));

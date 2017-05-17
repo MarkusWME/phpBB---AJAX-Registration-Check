@@ -3,7 +3,7 @@ var pcgfAJAXRegistrationCheckEMail = $('#pcgf-ajaxregistrationcheck-email');
 var pcgfAJAXRegistrationCheckPassword = $('#pcgf-ajaxregistrationcheck-password');
 var pcgfAJAXRegistrationCheckConfirmPassword = $('#pcgf-ajaxregistrationcheck-confirm-password');
 
-var pcgfAJAXRegistrationCheckEMailRule = new RegExp('^[A-Za-z0-9\.!#\$%&\'\*\+-/=\?\^_`\{\|\}~\.]*@([a-zA-Z0-9][a-zA-Z0-9\-]*\.)+[a-zA-Z]{2,}$', 'i');
+pcgfAJAXRegistrationCheckEMailRule = new RegExp(pcgfAJAXRegistrationCheckEMailRule, 'i');
 pcgfAJAXRegistrationCheckUsernameRule = new RegExp(pcgfAJAXRegistrationCheckUsernameRule, 'i');
 
 function setInvalid(message, messageField, field) {
