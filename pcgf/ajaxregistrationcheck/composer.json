@@ -4,7 +4,7 @@
     "description": "An extension that checks data on the registration form with AJAX so that no invalid or unwanted data could be typed in",
     "homepage": "https://github.com/MarkusWME/phpBB---AJAX-Registration-Check",
     "version": "1.0.0",
-    "time": "2017-05-12",
+    "time": "2017-05-18",
     "keywords": ["ajax", "registration", "check", "registration check", "ajax check", "ajax registration check"],
     "license": "GPL-2.0",
     "authors": [

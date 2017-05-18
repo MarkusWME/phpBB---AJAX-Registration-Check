@@ -77,22 +77,38 @@ class listener implements EventSubscriberInterface
         switch ($username_rule)
         {
             case 'USERNAME_CHARS_ANY':
-                $username_rule = "^.*$";
+                $username_rule = "^.+$";
             break;
             case 'USERNAME_ALPHA_ONLY':
-                $username_rule = "^[a-zA-Z0-9]*$";
+                $username_rule = "^[a-zA-Z0-9]+$";
             break;
             case 'USERNAME_ALPHA_SPACERS':
-                $username_rule = "^[a-zA-Z0-9 \\-\\+_\\[\\\]]*$";
+                $username_rule = "^[a-zA-Z0-9 \\-\\+_\\[\\\]]+$";
             break;
             case 'USERNAME_LETTER_NUM':
-                $username_rule = "^[a-zA-Z0-9äöüÄÖÜ]*$";
+                $username_rule = "^[a-zA-Z0-9äöüÄÖÜ]+$";
             break;
             case 'USERNAME_LETTER_NUM_SPACERS':
-                $username_rule = "^[a-zA-Z0-9äöüÄÖÜ \\-\\+_\\[\\\]]*$";
+                $username_rule = "^[a-zA-Z0-9äöüÄÖÜ \\-\\+_\\[\\\]]+$";
             break;
             case 'USERNAME_ASCII':
-                $username_rule = "^[a-zA-Z0-9 !\\\"#\\$%&'\\(\\)\\*\\+,\\-\\.\\/:;<=>\\?@\\[\\\]\\^_`\\{\\|\\}~]*$";
+                $username_rule = "^[a-zA-Z0-9 !\\\"#\\$%&'\\(\\)\\*\\+,\\-\\.\\/:;<=>\\?@\\[\\\]\\^_`\\{\\|\\}~]+$";
+            break;
+        }
+        $password_rule = $this->config['pass_complex'];
+        switch ($password_rule)
+        {
+            case 'PASS_TYPE_ANY':
+                $password_rule = 0;
+            break;
+            case 'PASS_TYPE_CASE':
+                $password_rule = 10;
+            break;
+            case 'PASS_TYPE_ALPHA':
+                $password_rule = 100;
+            break;
+            case 'PASS_TYPE_SYMBOL':
+                $password_rule = 1000;
             break;
         }
         $this->template->assign_vars(array(
@@ -101,6 +117,10 @@ class listener implements EventSubscriberInterface
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_RULE'               => $username_rule,
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_INVALID_BOUNDARIES' => $this->user->lang($this->config['allow_name_chars'] . '_EXPLAIN', $this->config['min_name_chars'], $this->config['max_name_chars']),
             'PCGF_AJAXREGISTRATIONCHECK_EMAIL_RULE'                  => str_replace('\\', '\\\\', get_preg_expression('email')),
+            'PCGF_AJAXREGISTRATIONCHECK_PASSWORD_MIN'                => $this->config['min_pass_chars'],
+            'PCGF_AJAXREGISTRATIONCHECK_PASSWORD_MAX'                => $this->config['max_pass_chars'],
+            'PCGF_AJAXREGISTRATIONCHECK_PASSWORD_RULE'               => $password_rule,
+            'PCGF_AJAXREGISTRATIONCHECK_PASSWORD_INVALID_BOUNDARIES' => $this->user->lang($this->config['pass_complex'] . '_EXPLAIN', $this->config['min_pass_chars'], $this->config['max_pass_chars']),
             'PCGF_AJAXREGISTRATIONCHECK_CHECK_USERNAME_LINK'         => $this->helper->route('pcgf_ajaxregistrationcheck_controller', array('type' => 'username')),
             'PCGF_AJAXREGISTRATIONCHECK_CHECK_EMAIL_LINK'            => $this->helper->route('pcgf_ajaxregistrationcheck_controller', array('type' => 'email')),
         ));

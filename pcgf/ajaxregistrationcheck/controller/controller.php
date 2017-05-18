@@ -16,12 +16,25 @@ use phpbb\user;
 /** @version 1.0.0 */
 class controller
 {
+    /** @var request $request Request object */
     protected $request;
 
+    /** @var factory $db Database object */
     protected $db;
 
+    /** @var user $user User object */
     protected $user;
 
+    /**
+     * Controller constructor
+     *
+     * @access public
+     * @since  1.0.0
+     *
+     * @param request $request Request object
+     * @param factory $db      Database object
+     * @param user    $user    User object
+     */
     public function __construct(request $request, factory $db, user $user)
     {
         $this->request = $request;
@@ -29,6 +42,14 @@ class controller
         $this->user = $user;
     }
 
+    /**
+     * Function that checks the user input
+     *
+     * @access public
+     * @since  1.0.0
+     *
+     * @param string $type The input type
+     */
     public function check($type)
     {
         // Load needed language data
@@ -86,10 +107,11 @@ class controller
                     $email = $this->request->variable('search', '');
                     if ($email !== '')
                     {
+                        $email_escaped = $this->db->sql_escape($email);
                         // Check if the email is already used
                         $query = 'SELECT user_email
                                     FROM ' . USERS_TABLE . '
-                                    WHERE user_email = "' . $this->db->sql_escape($email) . '"';
+                                    WHERE user_email = "' . $email_escaped . '"';
                         $result = $this->db->sql_query($query);
                         if ($this->db->sql_fetchrow($result))
                         {
@@ -99,9 +121,23 @@ class controller
                         $this->db->sql_freeresult($result);
                         if ($response_text[0] !== 'NOT OK')
                         {
-                            // Check passed - set status to OK
-                            $response_text[0] = 'OK';
-                            $response_text[1] = $this->user->lang('PCGF_AJAXREGISTRATIONCHECK_EMAIL_OK');
+                            // Check if the username is blocked by the board admin
+                            $query = 'SELECT ban_email
+                                        FROM ' . BANLIST_TABLE . '
+                                        WHERE ban_email = "' . $email_escaped . '"';
+                            $result = $this->db->sql_query($query);
+                            if ($this->db->sql_fetchrow($result))
+                            {
+                                $response_text[0] = 'NOT OK';
+                                $response_text[1] = $this->user->lang('EMAIL_BANNED_EMAIL');
+                            }
+                            $this->db->sql_freeresult($result);
+                            if ($response_text[0] !== 'NOT OK')
+                            {
+                                // All checks passed - set status to OK
+                                $response_text[0] = 'OK';
+                                $response_text[1] = $this->user->lang('PCGF_AJAXREGISTRATIONCHECK_EMAIL_OK');
+                            }
                         }
                     }
                 break;
