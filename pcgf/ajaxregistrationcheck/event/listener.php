@@ -112,6 +112,7 @@ class listener implements EventSubscriberInterface
             break;
         }
         $this->template->assign_vars(array(
+            'PCGF_AJAXREGISTRATIONCHECK'                             => true,
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_MIN'                => $this->config['min_name_chars'],
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_MAX'                => $this->config['max_name_chars'],
             'PCGF_AJAXREGISTRATIONCHECK_USERNAME_RULE'               => $username_rule,

@@ -9,9 +9,11 @@
 namespace pcgf\ajaxregistrationcheck\controller;
 
 use phpbb\db\driver\factory;
+use phpbb\event\dispatcher;
 use phpbb\json_response;
 use phpbb\request\request;
 use phpbb\user;
+use rmcgirr83\stopforumspam\event\main_listener;
 
 /** @version 1.0.0 */
 class controller
@@ -25,21 +27,31 @@ class controller
     /** @var user $user User object */
     protected $user;
 
+    /** @var dispatcher $dispatcher phpBB event dispatcher */
+    protected $dispatcher;
+
+    /** @var null|main_listener $sfs Stop Forum Spam listener object */
+    protected $sfs;
+
     /**
      * Controller constructor
      *
      * @access public
      * @since  1.0.0
      *
-     * @param request $request Request object
-     * @param factory $db      Database object
-     * @param user    $user    User object
+     * @param request            $request    Request object
+     * @param factory            $db         Database object
+     * @param user               $user       User object
+     * @param dispatcher         $dispatcher phpBB event dispatcher
+     * @param main_listener|null $sfs        Stop Forum Spam listener object
      */
-    public function __construct(request $request, factory $db, user $user)
+    public function __construct(request $request, factory $db, user $user, dispatcher $dispatcher, main_listener $sfs = null)
     {
         $this->request = $request;
         $this->db = $db;
         $this->user = $user;
+        $this->dispatcher = $dispatcher;
+        $this->sfs = $sfs;
     }
 
     /**
@@ -126,10 +138,15 @@ class controller
                                         FROM ' . BANLIST_TABLE . '
                                         WHERE ban_email = "' . $email_escaped . '"';
                             $result = $this->db->sql_query($query);
-                            if ($this->db->sql_fetchrow($result))
+                            while ($disallowed_email = $this->db->sql_fetchrow($result))
                             {
-                                $response_text[0] = 'NOT OK';
-                                $response_text[1] = $this->user->lang('EMAIL_BANNED_EMAIL');
+                                // Check if the username matches the rule
+                                if (preg_match('/^' . str_replace('%', '.*', $disallowed_email['ban_email']) . '$/i', $email))
+                                {
+                                    $response_text[0] = 'NOT OK';
+                                    $response_text[1] = $this->user->lang('EMAIL_BANNED_EMAIL');
+                                    break;
+                                }
                             }
                             $this->db->sql_freeresult($result);
                             if ($response_text[0] !== 'NOT OK')
@@ -141,6 +158,17 @@ class controller
                         }
                     }
                 break;
+            }
+            if ($this->sfs !== null)
+            {
+                $error = array();
+                $data = array(
+                    'username' => isset($username) ? $username : '',
+                    'email'    => isset($email) ? $email : '',
+                );
+                $vars = array('error', 'data');
+                extract($this->dispatcher->trigger_event('core.ucp_register_data_after', compact($vars)));
+                $response_text[2] = $error[0];
             }
         }
         $response->send($response_text);

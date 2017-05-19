@@ -23,6 +23,5 @@ $lang = array_merge($lang, array(
     'PCGF_AJAXREGISTRATIONCHECK_USERNAME_OK'    => 'Der angegebene Benutzername darf verwendet werden.',
     'PCGF_AJAXREGISTRATIONCHECK_EMAIL_INVALID'  => 'Die Eingabe ist keine gültige E-Mail-Adresse!',
     'PCGF_AJAXREGISTRATIONCHECK_EMAIL_OK'       => 'Die angegebene E-Mail-Adresse darf verwendet werden.',
-    'PCGF_AJAXREGISTRATIONCHECK_PASSWORD_OK'    => 'Das angegebene Passwort darf verwendet werden.',
     'AJAXREGISTRATIONCHECK_CONFIRM_PASSWORD_OK' => 'Die angegebenen Passwörter stimmen überein.',
 ));
