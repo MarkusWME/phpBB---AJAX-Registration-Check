@@ -1,3 +1,5 @@
+var pcgfAJAXRegistrationCheckSFS = $('#pcgf-ajaxregistrationcheck-sfs');
+var pcgfAJAXRegistrationCheckSFSField = $('#pcgf-ajaxregistrationcheck-sfs-field');
 var pcgfAJAXRegistrationCheckUsername = $('#pcgf-ajaxregistrationcheck-username');
 var pcgfAJAXRegistrationCheckEMail = $('#pcgf-ajaxregistrationcheck-email');
 var pcgfAJAXRegistrationCheckPassword = $('#pcgf-ajaxregistrationcheck-password');
@@ -25,6 +27,13 @@ function setLoading(message, messageField, field) {
 }
 
 $(document).ready(function() {
+    pcgfAJAXRegistrationCheckSFS.insertAfter($('fieldset.fields2').get(0));
+    pcgfAJAXRegistrationCheckSFSField.on('change', function() {
+        var value = $(this).val();
+        pcgfAJAXRegistrationCheckSFS.html(value);
+        $(this).get(0).setCustomValidity(value);
+    });
+    pcgfAJAXRegistrationCheckSFSField.trigger('change');
     var usernameField = $('#username');
     pcgfAJAXRegistrationCheckUsername.insertAfter(usernameField);
     usernameField.on('keyup', function() {
@@ -49,6 +58,11 @@ $(document).ready(function() {
                     } else {
                         // Username not allowed for any reason
                         setInvalid(result[1], pcgfAJAXRegistrationCheckUsername, usernameField);
+                    }
+                    if (result[2] !== null) {
+                        pcgfAJAXRegistrationCheckSFSField.val(result[2]).trigger('change');
+                    } else {
+                        pcgfAJAXRegistrationCheckSFSField.val('').trigger('change');
                     }
                 }
             });
@@ -79,6 +93,11 @@ $(document).ready(function() {
                         // The E-Mail address is not allowed for any reason
                         setInvalid(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
                     }
+                    if (result[2] !== null) {
+                        pcgfAJAXRegistrationCheckSFSField.val(result[2]).trigger('change');
+                    } else {
+                        pcgfAJAXRegistrationCheckSFSField.val('').trigger('change');
+                    }
                 }
             });
         }
@@ -90,28 +109,29 @@ $(document).ready(function() {
     passwordField.on('keyup', function() {
         passwordConfirmationField.trigger('keyup');
         var value = $(this).val();
-        var containsLowerCase = value.match(/[a-z]/) !== null;
-        var containsUpperCase = value.match(/[A-Z]/) !== null;
-        var containsNumber = value.match(/[0-9]/) !== null;
-        var containsSymbol = value.match(/[^a-zA-Z0-9]/) !== null;
+        var containsLowerCase = value.match(/[a-z]/g);
+        var containsUpperCase = value.match(/[A-Z]/g);
+        var containsNumber = value.match(/[0-9]/g);
+        var containsSymbol = value.match(/[^a-zA-Z0-9]/g);
+        var valid = false;
         if (value.length < pcgfAJAXRegistrationCheckPasswordMin || value.length > pcgfAJAXRegistrationCheckPasswordMax) {
             // The password is too short or too long
             setInvalid(pcgfAJAXRegistrationCheckPasswordInvalid, pcgfAJAXRegistrationCheckPassword, $(this));
         } else {
             if (pcgfAJAXRegistrationCheckPasswordRule <= 0) {
                 // The password is allowed because it has no matching rules
-                setValid(pcgfAJAXRegistrationCheckPasswordValid, pcgfAJAXRegistrationCheckPassword, $(this));
+                valid = true;
             } else if (containsLowerCase && containsUpperCase) {
                 if (pcgfAJAXRegistrationCheckPasswordRule <= 10) {
                     // The password contains all needed characters
-                    setValid(pcgfAJAXRegistrationCheckPasswordValid, pcgfAJAXRegistrationCheckPassword, $(this));
+                    valid = true;
                 } else if (containsNumber) {
                     if (pcgfAJAXRegistrationCheckPasswordRule <= 100) {
                         // The password contains all needed characters
-                        setValid(pcgfAJAXRegistrationCheckPasswordValid, pcgfAJAXRegistrationCheckPassword, $(this));
+                        valid = true;
                     } else if (containsSymbol) {
                         // The password contains all needed characters
-                        setValid(pcgfAJAXRegistrationCheckPasswordValid, pcgfAJAXRegistrationCheckPassword, $(this));
+                        valid = true;
                     } else {
                         // The password is incorrect because it has to contain at least also a symbol
                         setInvalid(pcgfAJAXRegistrationCheckPasswordInvalid, pcgfAJAXRegistrationCheckPassword, $(this));
@@ -124,6 +144,29 @@ $(document).ready(function() {
                 // The password is incorrect because it has to contain at least upper and lower case characters
                 setInvalid(pcgfAJAXRegistrationCheckPasswordInvalid, pcgfAJAXRegistrationCheckPassword, $(this));
             }
+        }
+        if (valid) {
+            var percentage = 0;
+            if (containsLowerCase) {
+                percentage += (containsLowerCase.length > 5 ? 5 : containsLowerCase.length) * 5;
+            }
+            if (containsUpperCase) {
+                percentage += (containsUpperCase.length > 3 ? 3 : containsUpperCase.length) * 7;
+            }
+            // Szj9*pCR&!fN^AHD
+            if (containsNumber) {
+                percentage += (containsNumber.length > 2 ? 2 : containsNumber.length) * 10;
+            }
+            if (containsSymbol) {
+                percentage += (containsSymbol.length > 2 ? 2 : containsSymbol.length) * 14;
+            }
+            if (value.indexOf(usernameField.val()) < 0 && value.indexOf(eMailField.val()) < 0) {
+                percentage += 6;
+            }
+            pcgfAJAXRegistrationCheckPassword.removeClass('invalid').removeClass('valid');
+            pcgfAJAXRegistrationCheckPassword.html('<progress id="pcgf-ajaxregistrationcheck-security" max="100">' + percentage + '%</progress>');
+            $(this).get(0).setCustomValidity('');
+            $('#pcgf-ajaxregistrationcheck-security').val(percentage);
         }
     });
     passwordField.trigger('keyup');

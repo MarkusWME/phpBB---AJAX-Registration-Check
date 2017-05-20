@@ -4,6 +4,11 @@ div.inline {
     padding-left: 26px;
 }
 
+div.sfs {
+    margin-top: 10px;
+    padding-left: 28px;
+}
+
 div.invalid {
     background: url("images/invalid.png") no-repeat;
     background-size: contain;
@@ -14,6 +19,13 @@ div.valid {
     background: url("images/valid.png") no-repeat;
     background-size: contain;
     color: rgb(0, 200, 0);
+}
+
+progress#pcgf-ajaxregistrationcheck-security {
+    border: 1px solid rgb(100, 100, 100);
+    width: 150px;
+    height: 14px;
+    line-height: 100%;
 }
 
 div.loading-circle {

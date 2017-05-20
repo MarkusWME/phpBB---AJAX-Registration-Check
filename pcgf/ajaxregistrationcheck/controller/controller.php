@@ -161,6 +161,7 @@ class controller
             }
             if ($this->sfs !== null)
             {
+                // Check if user is banned via Stop Forum Spam
                 $error = array();
                 $data = array(
                     'username' => isset($username) ? $username : '',
