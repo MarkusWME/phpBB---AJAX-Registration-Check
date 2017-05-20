@@ -153,7 +153,6 @@ $(document).ready(function() {
             if (containsUpperCase) {
                 percentage += (containsUpperCase.length > 3 ? 3 : containsUpperCase.length) * 7;
             }
-            // Szj9*pCR&!fN^AHD
             if (containsNumber) {
                 percentage += (containsNumber.length > 2 ? 2 : containsNumber.length) * 10;
             }
@@ -163,10 +162,26 @@ $(document).ready(function() {
             if (value.indexOf(usernameField.val()) < 0 && value.indexOf(eMailField.val()) < 0) {
                 percentage += 6;
             }
-            pcgfAJAXRegistrationCheckPassword.removeClass('invalid').removeClass('valid');
-            pcgfAJAXRegistrationCheckPassword.html('<progress id="pcgf-ajaxregistrationcheck-security" max="100">' + percentage + '%</progress>');
+            if (pcgfAJAXRegistrationCheckPassword.hasClass('invalid')) {
+                pcgfAJAXRegistrationCheckPassword.removeClass('invalid');
+                var securityHTML = '<span>' + pcgfAJAXRegistrationCheckPasswordStrength + '</span>';
+                securityHTML += '<progress id="pcgf-ajaxregistrationcheck-security" max="100">' + percentage + '%</progress>';
+                securityHTML += '<span id="pcgf-ajaxregistrationcheck-strength"></span>';
+                pcgfAJAXRegistrationCheckPassword.html(securityHTML);
+            }
             $(this).get(0).setCustomValidity('');
             $('#pcgf-ajaxregistrationcheck-security').val(percentage);
+            if (percentage >= 95) {
+                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordVeryStrong);
+            } else if (percentage >= 85) {
+                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordStrong);
+            } else if (percentage >= 60) {
+                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordNormal);
+            } else if (percentage >= 45) {
+                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordWeak);
+            } else {
+                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordVeryWeak);
+            }
         }
     });
     passwordField.trigger('keyup');
