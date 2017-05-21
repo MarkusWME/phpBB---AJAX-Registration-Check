@@ -34,77 +34,19 @@ $(document).ready(function() {
         $(this).get(0).setCustomValidity(value);
     });
     pcgfAJAXRegistrationCheckSFSField.trigger('change');
-    var usernameField = $('#username');
-    pcgfAJAXRegistrationCheckUsername.insertAfter(usernameField);
-    usernameField.on('keyup', function() {
-        var value = $(this).val();
-        if (value.length < pcgfAJAXRegistrationCheckUsernameMin || value.length > pcgfAJAXRegistrationCheckUsernameMax || value.match(pcgfAJAXRegistrationCheckUsernameRule) === null) {
-            // Username doesn't match the naming guidelines
-            setInvalid(pcgfAJAXRegistrationCheckUsernameInvalidBoundaries, pcgfAJAXRegistrationCheckUsername, $(this));
-        } else {
-            // Check username online
-            setLoading(pcgfAJAXRegistrationCheckLoading, pcgfAJAXRegistrationCheckUsername, $(this));
-            $.ajax({
-                url: pcgfAJAXRegistrationCheckUsernameCheckLink,
-                type: 'POST',
-                data: {'search': value},
-                success: function(result) {
-                    if (result[0] === 'OK') {
-                        // Username is allowed
-                        setValid(result[1], pcgfAJAXRegistrationCheckUsername, usernameField);
-                    } else if (result[0] === 'INVALID QUERY') {
-                        // The query was invalid
-                        setLoading(result[1], pcgfAJAXRegistrationCheckUsername, usernameField);
-                    } else {
-                        // Username not allowed for any reason
-                        setInvalid(result[1], pcgfAJAXRegistrationCheckUsername, usernameField);
-                    }
-                    if (result[2] !== null) {
-                        pcgfAJAXRegistrationCheckSFSField.val(result[2]).trigger('change');
-                    } else {
-                        pcgfAJAXRegistrationCheckSFSField.val('').trigger('change');
-                    }
-                }
-            });
-        }
-    });
-    usernameField.trigger('keyup');
-    var eMailField = $('#email');
-    pcgfAJAXRegistrationCheckEMail.insertAfter(eMailField);
-    eMailField.on('keyup', function() {
-        var value = $(this).val();
-        if (value.match(pcgfAJAXRegistrationCheckEMailRule) === null) {
-            // The input is not a valid E-Mail address
-            setInvalid(pcgfAJAXRegistrationCheckEMailInvalid, pcgfAJAXRegistrationCheckEMail, $(this));
-        } else {
-            setLoading(pcgfAJAXRegistrationCheckLoading, pcgfAJAXRegistrationCheckEMail, $(this));
-            $.ajax({
-                url: pcgfAJAXRegistrationCheckEMailCheckLink,
-                type: 'POST',
-                data: {'search': value},
-                success: function(result) {
-                    if (result[0] === 'OK') {
-                        // The E-Mail address is allowed
-                        setValid(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
-                    } else if (result[0] === 'INVALID QUERY') {
-                        // The query was invalid
-                        setLoading(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
-                    } else {
-                        // The E-Mail address is not allowed for any reason
-                        setInvalid(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
-                    }
-                    if (result[2] !== null) {
-                        pcgfAJAXRegistrationCheckSFSField.val(result[2]).trigger('change');
-                    } else {
-                        pcgfAJAXRegistrationCheckSFSField.val('').trigger('change');
-                    }
-                }
-            });
-        }
-    });
-    eMailField.trigger('keyup');
     var passwordField = $('#new_password');
     var passwordConfirmationField = $('#password_confirm');
+    pcgfAJAXRegistrationCheckConfirmPassword.insertAfter(passwordConfirmationField);
+    passwordConfirmationField.on('keyup', function() {
+        if ($(this).val() === passwordField.val()) {
+            // The given passwords match
+            setValid(pcgfAJAXRegistrationCheckConfirmPasswordValid, pcgfAJAXRegistrationCheckConfirmPassword, $(this));
+        } else {
+            // The given passwords don't match
+            setInvalid(pcgfAJAXRegistrationCheckConfirmPasswordInvalid, pcgfAJAXRegistrationCheckConfirmPassword, $(this));
+        }
+    });
+    passwordConfirmationField.trigger('keyup');
     pcgfAJAXRegistrationCheckPassword.insertAfter(passwordField);
     passwordField.on('keyup', function() {
         passwordConfirmationField.trigger('keyup');
@@ -147,53 +89,129 @@ $(document).ready(function() {
         }
         if (valid) {
             var percentage = 0;
+            // Check password strength
             if (containsLowerCase) {
+                // Password should contain at least 5 lower case characters
                 percentage += (containsLowerCase.length > 5 ? 5 : containsLowerCase.length) * 5;
             }
             if (containsUpperCase) {
+                // Password should contain at least 3 upper case characters
                 percentage += (containsUpperCase.length > 3 ? 3 : containsUpperCase.length) * 7;
             }
             if (containsNumber) {
+                // Password should contain at least 2 numbers
                 percentage += (containsNumber.length > 2 ? 2 : containsNumber.length) * 10;
             }
             if (containsSymbol) {
+                // Password should contain at least 2 symbols
                 percentage += (containsSymbol.length > 2 ? 2 : containsSymbol.length) * 14;
             }
-            if (value.indexOf(usernameField.val()) < 0 && value.indexOf(eMailField.val()) < 0) {
+            if ((usernameField.val() === '' || value.indexOf(usernameField.val()) < 0) && (eMailField.val() === '' || value.indexOf(eMailField.val()) < 0)) {
+                // Password should not contain username or E-Mail address
                 percentage += 6;
             }
             if (pcgfAJAXRegistrationCheckPassword.hasClass('invalid')) {
-                pcgfAJAXRegistrationCheckPassword.removeClass('invalid');
+                pcgfAJAXRegistrationCheckPassword.removeClass('invalid').addClass('password-strength');
                 var securityHTML = '<span>' + pcgfAJAXRegistrationCheckPasswordStrength + '</span>';
-                securityHTML += '<progress id="pcgf-ajaxregistrationcheck-security" max="100">' + percentage + '%</progress>';
+                securityHTML += '<div class="progressbar"><div id="pcgf-ajaxregistrationcheck-security">&nbsp;</div></div>';
                 securityHTML += '<span id="pcgf-ajaxregistrationcheck-strength"></span>';
                 pcgfAJAXRegistrationCheckPassword.html(securityHTML);
             }
+            // Set password status
             $(this).get(0).setCustomValidity('');
-            $('#pcgf-ajaxregistrationcheck-security').val(percentage);
+            var securityPB = $('#pcgf-ajaxregistrationcheck-security');
+            var strengthText = $('#pcgf-ajaxregistrationcheck-strength');
+            securityPB.stop().animate({width: percentage + '%', overflow: 'overflow'}, 800);
             if (percentage >= 95) {
-                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordVeryStrong);
+                strengthText.html(pcgfAJAXRegistrationCheckPasswordVeryStrong);
+                securityPB.removeClass().addClass('very-strong');
             } else if (percentage >= 85) {
-                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordStrong);
+                strengthText.html(pcgfAJAXRegistrationCheckPasswordStrong);
+                securityPB.removeClass().addClass('strong');
             } else if (percentage >= 60) {
-                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordNormal);
+                strengthText.html(pcgfAJAXRegistrationCheckPasswordNormal);
+                securityPB.removeClass().addClass('normal');
             } else if (percentage >= 45) {
-                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordWeak);
+                strengthText.html(pcgfAJAXRegistrationCheckPasswordWeak);
+                securityPB.removeClass().addClass('weak');
             } else {
-                $('#pcgf-ajaxregistrationcheck-strength').html(pcgfAJAXRegistrationCheckPasswordVeryWeak);
+                strengthText.html(pcgfAJAXRegistrationCheckPasswordVeryWeak);
+                securityPB.removeClass().addClass('very-weak');
             }
+        } else {
+            pcgfAJAXRegistrationCheckPassword.removeClass('password-strength');
         }
     });
     passwordField.trigger('keyup');
-    pcgfAJAXRegistrationCheckConfirmPassword.insertAfter(passwordConfirmationField);
-    passwordConfirmationField.on('keyup', function() {
-        if ($(this).val() === passwordField.val()) {
-            // The given passwords match
-            setValid(pcgfAJAXRegistrationCheckConfirmPasswordValid, pcgfAJAXRegistrationCheckConfirmPassword, $(this));
+    var usernameField = $('#username');
+    pcgfAJAXRegistrationCheckUsername.insertAfter(usernameField);
+    usernameField.on('keyup', function() {
+        passwordField.trigger('keyup');
+        var value = $(this).val();
+        if (value.length < pcgfAJAXRegistrationCheckUsernameMin || value.length > pcgfAJAXRegistrationCheckUsernameMax || value.match(pcgfAJAXRegistrationCheckUsernameRule) === null) {
+            // Username doesn't match the naming guidelines
+            setInvalid(pcgfAJAXRegistrationCheckUsernameInvalidBoundaries, pcgfAJAXRegistrationCheckUsername, $(this));
         } else {
-            // The given passwords don't match
-            setInvalid(pcgfAJAXRegistrationCheckConfirmPasswordInvalid, pcgfAJAXRegistrationCheckConfirmPassword, $(this));
+            // Check username online
+            setLoading(pcgfAJAXRegistrationCheckLoading, pcgfAJAXRegistrationCheckUsername, $(this));
+            $.ajax({
+                url: pcgfAJAXRegistrationCheckUsernameCheckLink,
+                type: 'POST',
+                data: {'search': value},
+                success: function(result) {
+                    if (result[0] === 'OK') {
+                        // Username is allowed
+                        setValid(result[1], pcgfAJAXRegistrationCheckUsername, usernameField);
+                    } else if (result[0] === 'INVALID QUERY') {
+                        // The query was invalid
+                        setLoading(result[1], pcgfAJAXRegistrationCheckUsername, usernameField);
+                    } else {
+                        // Username not allowed for any reason
+                        setInvalid(result[1], pcgfAJAXRegistrationCheckUsername, usernameField);
+                    }
+                    if (result[2] !== null) {
+                        pcgfAJAXRegistrationCheckSFSField.val(result[2]).trigger('change');
+                    } else {
+                        pcgfAJAXRegistrationCheckSFSField.val('').trigger('change');
+                    }
+                }
+            });
         }
     });
-    passwordConfirmationField.trigger('keyup');
+    usernameField.trigger('keyup');
+    var eMailField = $('#email');
+    pcgfAJAXRegistrationCheckEMail.insertAfter(eMailField);
+    eMailField.on('keyup', function() {
+        passwordField.trigger('keyup');
+        var value = $(this).val();
+        if (value.match(pcgfAJAXRegistrationCheckEMailRule) === null) {
+            // The input is not a valid E-Mail address
+            setInvalid(pcgfAJAXRegistrationCheckEMailInvalid, pcgfAJAXRegistrationCheckEMail, $(this));
+        } else {
+            setLoading(pcgfAJAXRegistrationCheckLoading, pcgfAJAXRegistrationCheckEMail, $(this));
+            $.ajax({
+                url: pcgfAJAXRegistrationCheckEMailCheckLink,
+                type: 'POST',
+                data: {'search': value},
+                success: function(result) {
+                    if (result[0] === 'OK') {
+                        // The E-Mail address is allowed
+                        setValid(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
+                    } else if (result[0] === 'INVALID QUERY') {
+                        // The query was invalid
+                        setLoading(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
+                    } else {
+                        // The E-Mail address is not allowed for any reason
+                        setInvalid(result[1], pcgfAJAXRegistrationCheckEMail, eMailField);
+                    }
+                    if (result[2] !== null) {
+                        pcgfAJAXRegistrationCheckSFSField.val(result[2]).trigger('change');
+                    } else {
+                        pcgfAJAXRegistrationCheckSFSField.val('').trigger('change');
+                    }
+                }
+            });
+        }
+    });
+    eMailField.trigger('keyup');
 });

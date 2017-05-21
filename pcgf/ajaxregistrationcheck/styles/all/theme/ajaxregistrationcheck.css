@@ -266,3 +266,86 @@ div.loading-circle div.circle12:before {
         opacity: 1;
     }
 }
+
+div.password-strength {
+    padding-left: 0;
+}
+
+div#pcgf-ajaxregistrationcheck-security {
+    width: 0;
+}
+
+div.progressbar {
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid rgb(153, 153, 153);
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background-color: rgb(190, 190, 190);
+    width: 200px;
+    height: auto;
+}
+
+div.progressbar > div {
+    height: 100%;
+    text-align: center;
+    white-space: nowrap;
+    background-image: -moz-linear-gradient(135deg, rgba(0, 0, 0, 0.10) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.10) 50%, rgba(0, 0, 0, 0.10) 75%, transparent 75%, transparent);
+    background-image: -ms-linear-gradient(135deg, rgba(0, 0, 0, 0.10) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.10) 50%, rgba(0, 0, 0, 0.10) 75%, transparent 75%, transparent);
+    background-image: -o-linear-gradient(135deg, rgba(0, 0, 0, 0.10) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.10) 50%, rgba(0, 0, 0, 0.10) 75%, transparent 75%, transparent);
+    background-image: -webkit-linear-gradient(135deg, rgba(0, 0, 0, 0.10) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.10) 50%, rgba(0, 0, 0, 0.10) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.10) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.10) 50%, rgba(0, 0, 0, 0.10) 75%, transparent 75%, transparent);
+    background-size: 60px 60px;
+    animation: animate-stripes 5s linear 0s normal none infinite;
+    border-radius: 5px;
+}
+
+div.progressbar > div.very-strong {
+    background-color: rgb(50, 180, 50);
+    -moz-transition: color 0.8s linear;
+    -o-transition: color 0.8s linear;
+    -webkit-transition: color 0.8s linear;
+    transition: color 0.8s linear;
+}
+
+div.progressbar > div.strong {
+    background-color: rgb(102, 204, 102);
+    -moz-transition: color 0.8s linear;
+    -o-transition: color 0.8s linear;
+    -webkit-transition: color 0.8s linear;
+    transition: color 0.8s linear;
+}
+
+div.progressbar > div.normal {
+    background-color: rgb(255, 204, 0);
+    -moz-transition: color 0.8s linear;
+    -o-transition: color 0.8s linear;
+    -webkit-transition: color 0.8s linear;
+    transition: color 0.8s linear;
+}
+
+div.progressbar > div.weak {
+    background-color: rgb(220, 102, 51);
+    -moz-transition: color 0.8s linear;
+    -o-transition: color 0.8s linear;
+    -webkit-transition: color 0.8s linear;
+    transition: color 0.8s linear;
+}
+
+div.progressbar > div.very-weak {
+    background-color: rgb(204, 51, 51);
+    -moz-transition: color 0.8s linear;
+    -o-transition: color 0.8s linear;
+    -webkit-transition: color 0.8s linear;
+    transition: color 0.8s linear;
+}
+
+@keyframes animate-stripes {
+    0% {
+        background-position: 60px 0;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
