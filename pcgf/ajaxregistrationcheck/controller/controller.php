@@ -80,8 +80,8 @@ class controller
                         $username_escaped = $this->db->sql_escape($username);
                         // Check if the name is already used
                         $query = 'SELECT username
-                                    FROM ' . USERS_TABLE . '
-                                    WHERE username = "' . $username_escaped . '"';
+                                    FROM ' . USERS_TABLE . "
+                                    WHERE username = '" . $username_escaped . "'";
                         $result = $this->db->sql_query($query);
                         if ($this->db->sql_fetchrow($result))
                         {
@@ -122,8 +122,8 @@ class controller
                         $email_escaped = $this->db->sql_escape($email);
                         // Check if the email is already used
                         $query = 'SELECT user_email
-                                    FROM ' . USERS_TABLE . '
-                                    WHERE user_email = "' . $email_escaped . '"';
+                                    FROM ' . USERS_TABLE . "
+                                    WHERE user_email = '" . $email_escaped . "'";
                         $result = $this->db->sql_query($query);
                         if ($this->db->sql_fetchrow($result))
                         {
@@ -135,8 +135,8 @@ class controller
                         {
                             // Check if the username is blocked by the board admin
                             $query = 'SELECT ban_email
-                                        FROM ' . BANLIST_TABLE . '
-                                        WHERE ban_email = "' . $email_escaped . '"';
+                                        FROM ' . BANLIST_TABLE . "
+                                        WHERE ban_email = '" . $email_escaped . "'";
                             $result = $this->db->sql_query($query);
                             while ($disallowed_email = $this->db->sql_fetchrow($result))
                             {
@@ -167,6 +167,7 @@ class controller
                     'username' => isset($username) ? $username : '',
                     'email'    => isset($email) ? $email : '',
                 );
+                // Trigger registration check event to get the Stom Forum Spam result
                 $vars = array('error', 'data');
                 extract($this->dispatcher->trigger_event('core.ucp_register_data_after', compact($vars)));
                 $response_text[2] = $error[0];
