@@ -9,8 +9,6 @@ unwanted data could be typed in.
 * Check if the E-Mail address is valid or already in use
 * Check the password if it matches the security guidelines
 * Show password strength
-* Stop Forum Spam integration (if you have installed the Stop Forum Spam extension by RMcGirr83 which can be found
-  [here](https://www.phpbb.com/customise/db/extension/phpbb_3.1_stop_forum_spam/ "Stop Forum Spam extension by RMcGirr83"))
 * Does not allow to send the registration form until all input has been validated
 
 ## Supported styles
