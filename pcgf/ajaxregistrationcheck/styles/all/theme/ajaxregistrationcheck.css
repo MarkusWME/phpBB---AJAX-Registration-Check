@@ -4,11 +4,6 @@ div.inline {
     padding-left: 26px;
 }
 
-div.sfs {
-    margin-top: 10px;
-    padding-left: 28px;
-}
-
 div.invalid {
     background: url("images/invalid.png") no-repeat;
     background-size: contain;
